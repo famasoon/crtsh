@@ -31,7 +31,7 @@ func main() {
 	fmt.Println(query)
 
 	// TODO: Create HTTP Client
-	res, err := http.Get(CRTSH_URL + "?output=json&q=" + query)
+	res, err := http.Get(CRTSHURL + "?output=json&q=" + query)
 	if err != nil {
 		log.Fatal(err)
 	}

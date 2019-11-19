@@ -11,7 +11,8 @@ import (
 	"github.com/famasoon/crtsh/crtlog"
 )
 
-const CRTSH_URL = "https://crt.sh/"
+// CRTSHURL is URL of crt.sh endpoint
+const CRTSHURL string = "https://crt.sh/"
 
 // TODO: Create run function () (err)
 func main() {

@@ -56,7 +56,7 @@ func main() {
 	}
 
 	for key, ctlog := range ctlogs {
-		fmt.Printf("Index: %d\n", key)
+		fmt.Printf("Index: %d\n", key+1)
 		fmt.Printf("Issuer CA ID: %d\n", ctlog.IssuerCaID)
 		fmt.Printf("Issuer Name: %s\n", ctlog.IssuerName)
 		fmt.Printf("Name: %s\n", ctlog.NameValue)

@@ -14,6 +14,14 @@ import (
 // CRTSHURL is URL of crt.sh endpoint
 const CRTSHURL string = "https://crt.sh/"
 
+func showUsage() {
+	fmt.Println("This tool shows the result of crt.sh")
+	fmt.Println("Option:")
+	fmt.Println("  -q Query")
+	fmt.Printf("Usage: %s -q example.com\n", os.Args[0])
+	os.Exit(0)
+}
+
 func queryCrt(query string) error {
 	res, err := http.Get(CRTSHURL + "?output=json&q=" + query)
 	if err != nil {
@@ -52,13 +60,8 @@ func main() {
 	var query string
 	flag.StringVar(&query, "q", "", "Query String")
 	flag.Parse()
-	// TODO: Make Show Usage function
 	if query == "" {
-		fmt.Println("This tool shows the result of crt.sh")
-		fmt.Println("Option:")
-		fmt.Println("  -q Query")
-		fmt.Printf("Usage: %s -q example.com\n", os.Args[0])
-		os.Exit(0)
+		showUsage()
 	}
 
 	fmt.Println(query)

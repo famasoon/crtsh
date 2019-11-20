@@ -1,12 +1,16 @@
 package main
 
 import (
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/famasoon/crtsh/crtlog"
 )
@@ -18,6 +22,7 @@ func showUsage() {
 	fmt.Println("This tool shows the result of crt.sh")
 	fmt.Println("Option:")
 	fmt.Println("  -q Query")
+	fmt.Println("  -i Min Cert ID")
 	fmt.Printf("Usage: %s -q example.com\n", os.Args[0])
 	os.Exit(0)
 }
@@ -55,19 +60,63 @@ func queryCrt(query string) error {
 	return nil
 }
 
+func parseCTLog(certID int) error {
+	res, err := http.Get(CRTSHURL + "?d=" + strconv.Itoa(certID))
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		err = fmt.Errorf("Can not Access crt.sh")
+		return err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	block, _ := pem.Decode(body)
+
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Enumrate DNS Names:")
+	for _, dnsName := range cert.DNSNames {
+		fmt.Println(dnsName)
+	}
+	return nil
+}
+
 // TODO: Create run function () (err)
 func main() {
-	var query string
+	var (
+		query  string
+		certID int
+	)
 	flag.StringVar(&query, "q", "", "Query String")
+	flag.IntVar(&certID, "i", 0, "Min Cert ID")
 	flag.Parse()
-	if query == "" {
+	if query == "" && certID == 0 {
 		showUsage()
 	}
 
-	fmt.Println(query)
+	if query != "" {
+		fmt.Printf("Query: %s\n", query)
 
-	err := queryCrt(query)
-	if err != nil {
-		log.Fatal(err)
+		err := queryCrt(query)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		fmt.Printf("CertID: %d\n", certID)
+
+		err := parseCTLog(certID)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }

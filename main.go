@@ -28,7 +28,7 @@ func showUsage() {
 	os.Exit(0)
 }
 
-func queryCrt(query string) error {
+func queryCrt(query string, onlyDomainFlag bool) error {
 	res, err := http.Get(CRTSHURL + "?output=json&q=" + query)
 	if err != nil {
 		return err
@@ -46,18 +46,24 @@ func queryCrt(query string) error {
 		return err
 	}
 
-	for key, ctlog := range ctlogs {
-		fmt.Println("{")
-		fmt.Printf("  Index: %d\n", key+1)
-		fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
-		fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
-		fmt.Printf("  Name: %s\n", ctlog.NameValue)
-		fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
-		fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
-		fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
-		fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
-		fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
-		fmt.Println("}")
+	if onlyDomainFlag {
+		for _, ctlog := range ctlogs {
+			fmt.Printf("%s\n", ctlog.NameValue)
+		}
+	} else {
+		for key, ctlog := range ctlogs {
+			fmt.Println("{")
+			fmt.Printf("  Index: %d\n", key+1)
+			fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
+			fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
+			fmt.Printf("  Name: %s\n", ctlog.NameValue)
+			fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
+			fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
+			fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
+			fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
+			fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
+			fmt.Println("}")
+		}
 	}
 
 	return nil
@@ -97,10 +103,12 @@ func parseCTLog(certID int) error {
 // TODO: Create run function () (err)
 func main() {
 	var (
-		query  string
-		certID int
+		query          string
+		certID         int
+		onlyDomainFlag bool
 	)
 	flag.StringVar(&query, "q", "", "Query String")
+	flag.BoolVar(&onlyDomainFlag, "o", false, "Print only domains")
 	flag.IntVar(&certID, "i", 0, "Min Cert ID")
 	flag.Parse()
 	if query == "" && certID == 0 {
@@ -108,9 +116,7 @@ func main() {
 	}
 
 	if query != "" {
-		fmt.Printf("Query: %s\n", query)
-
-		err := queryCrt(query)
+		err := queryCrt(query, onlyDomainFlag)
 		if err != nil {
 			log.Fatal(err)
 		}

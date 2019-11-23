@@ -13,6 +13,7 @@ import (
 	"strconv"
 
 	"github.com/famasoon/crtsh/crtlog"
+	"github.com/famasoon/crtsh/parser"
 )
 
 // CRTSHURL is URL of crt.sh endpoint
@@ -85,7 +86,7 @@ func parseCTLog(certID int) error {
 	}
 
 	fmt.Println("Enumrate DNS Names:")
-	for _, dnsName := range cert.DNSNames {
+	for _, dnsName := range parser.EnumDNS(cert) {
 		fmt.Println(dnsName)
 	}
 	return nil

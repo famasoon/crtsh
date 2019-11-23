@@ -47,15 +47,17 @@ func queryCrt(query string) error {
 	}
 
 	for key, ctlog := range ctlogs {
-		fmt.Printf("Index: %d\n", key+1)
-		fmt.Printf("Issuer CA ID: %d\n", ctlog.IssuerCaID)
-		fmt.Printf("Issuer Name: %s\n", ctlog.IssuerName)
-		fmt.Printf("Name: %s\n", ctlog.NameValue)
-		fmt.Printf("Min Cert ID: %d\n", ctlog.MinCertID)
-		fmt.Printf("Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
-		fmt.Printf("Not Before: %s\n", ctlog.NotBefore)
-		fmt.Printf("Not After: %s\n", ctlog.NotAfter)
-		fmt.Println()
+		fmt.Println("{")
+		fmt.Printf("  Index: %d\n", key+1)
+		fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
+		fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
+		fmt.Printf("  Name: %s\n", ctlog.NameValue)
+		fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
+		fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
+		fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
+		fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
+		fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
+		fmt.Println("}")
 	}
 
 	return nil

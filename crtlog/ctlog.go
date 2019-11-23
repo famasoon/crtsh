@@ -1,6 +1,8 @@
 package crtlog
 
-type CTLogs []struct {
+type CTLogs []*CTLog
+
+type CTLog struct {
 	IssuerCaID        int    `json:"issuer_ca_id"`
 	IssuerName        string `json:"issuer_name"`
 	NameValue         string `json:"name_value"`

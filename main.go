@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/famasoon/crtsh/crtlog"
 	"github.com/famasoon/crtsh/parser"
@@ -24,12 +25,60 @@ func showUsage() {
 	fmt.Println("Option:")
 	fmt.Println("  -q Query")
 	fmt.Println("  -i Min Cert ID")
+	fmt.Println("  -cn Common Name")
 	fmt.Printf("Usage: %s -q example.com\n", os.Args[0])
 	os.Exit(0)
 }
 
+func searchComon(query string, onlyDomainFlag bool) error {
+	req := http.Client{
+		Timeout: 5 * time.Second,
+	}
+	res, err := req.Get(CRTSHURL + "?output=json&CN=" + query)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		err = fmt.Errorf("Can not Access crt.sh")
+		return err
+	}
+
+	var ctlogs crtlog.CTLogs
+
+	if err = json.NewDecoder(res.Body).Decode(&ctlogs); err != nil {
+		return err
+	}
+
+	if onlyDomainFlag {
+		for _, ctlog := range ctlogs {
+			fmt.Printf("%s\n", ctlog.NameValue)
+		}
+	} else {
+		for key, ctlog := range ctlogs {
+			fmt.Println("{")
+			fmt.Printf("  Index: %d\n", key+1)
+			fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
+			fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
+			fmt.Printf("  Name: %s\n", ctlog.NameValue)
+			fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
+			fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
+			fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
+			fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
+			fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
+			fmt.Println("}")
+		}
+	}
+
+	return nil
+}
+
 func queryCrt(query string, onlyDomainFlag bool) error {
-	res, err := http.Get(CRTSHURL + "?output=json&q=" + query)
+	req := http.Client{
+		Timeout: 5 * time.Second,
+	}
+	res, err := req.Get(CRTSHURL + "?output=json&q=" + query)
 	if err != nil {
 		return err
 	}
@@ -106,12 +155,14 @@ func main() {
 		query          string
 		certID         int
 		onlyDomainFlag bool
+		commonName     string
 	)
 	flag.StringVar(&query, "q", "", "Query String")
 	flag.BoolVar(&onlyDomainFlag, "o", false, "Print only domains")
 	flag.IntVar(&certID, "i", 0, "Min Cert ID")
+	flag.StringVar(&commonName, "cn", "", "Query string for common name")
 	flag.Parse()
-	if query == "" && certID == 0 {
+	if query == "" && certID == 0 && commonName == "" {
 		showUsage()
 	}
 
@@ -120,10 +171,15 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-	} else {
+	} else if certID != 0 {
 		fmt.Printf("CertID: %d\n", certID)
 
 		err := parseCTLog(certID)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		err := searchComon(commonName, onlyDomainFlag)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -108,6 +108,26 @@ $ crtsh -q example.com
 }
 ```
 
+---
+
+And `-q` option can use `-o` option.
+
+The `-o` option only enumerates domains.
+
+```sh
+$ crtsh -q example.com -o
+example.com
+example.com
+example.com
+example.com
+example.com
+example.com
+example.com
+example.com
+```
+
+---
+
 This option can query to use wildcard (% = wildcard) and `_`  (_ = completing input)
 
 For Example:
@@ -177,27 +197,9 @@ crtsh -q www.sagawa_exp.co.jp
 }
 ```
 
----
-
-And `-q` option can use `-o` option.
-
-The `-o` option only enumerates domains.
-
-```sh
-$ crtsh -q example.com -o
-example.com
-example.com
-example.com
-example.com
-example.com
-example.com
-example.com
-example.com
-```
-
 ### `-cn` option
-THe `-cn` option query CommonName.
-
+The `-cn` option query CommonName.
+And this option also can use `-o` option.
 For Example: `crtsh -cn <CommonName>
 
 ```sh

@@ -149,6 +149,18 @@ www.example.com
 www.example.com
 ```
 
+We can extract unique URL.
+
+```sh
+$ crtsh -q %.example.com -o | sort | uniq 
+*.example.com
+dev.example.com
+m.example.com
+products.example.com
+support.example.com
+www.example.com
+``` 
+
 ```sh
 crtsh -q www.sagawa_exp.co.jp
 {

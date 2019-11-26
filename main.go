@@ -76,7 +76,7 @@ func searchComon(query string, onlyDomainFlag bool) error {
 
 func queryCrt(query string, onlyDomainFlag bool) error {
 	req := http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 60 * time.Second,
 	}
 	res, err := req.Get(CRTSHURL + "?output=json&q=" + query)
 	if err != nil {

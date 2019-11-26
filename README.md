@@ -161,58 +161,58 @@ support.example.com
 www.example.com
 ``` 
 
+For Example `_` used:
+
 ```sh
-crtsh -q www.sagawa_exp.co.jp
-{
-  Index: 1
-  Issuer CA ID: 1399
-  Issuer Name: C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 Extended Validation Server CA
-  Name: www.sagawa-exp.co.jp
-  Min Cert ID: 2114355943
-  Min Entry TimeStamp: 2019-11-15T09:15:37.331
-  Not Before: 2019-11-12T00:00:00
-  Not After: 2020-11-20T12:00:00
-  Donwload Pem file: https://crt.sh/?d=2114355943
-}
-{
-  Index: 2
-  Issuer CA ID: 1399
-  Issuer Name: C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 Extended Validation Server CA
-  Name: www.sagawa-exp.co.jp
-  Min Cert ID: 2101305573
-  Min Entry TimeStamp: 2019-11-12T05:39:40.762
-  Not Before: 2019-11-12T00:00:00
-  Not After: 2020-11-20T12:00:00
-  Donwload Pem file: https://crt.sh/?d=2101305573
-}
-{
-  Index: 3
-  Issuer CA ID: 1399
-  Issuer Name: C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 Extended Validation Server CA
-  Name: www.sagawa-exp.co.jp
-  Min Cert ID: 1470039453
-  Min Entry TimeStamp: 2019-05-14T11:02:28.185
-  Not Before: 2018-11-20T00:00:00
-  Not After: 2019-11-21T12:00:00
-  Donwload Pem file: https://crt.sh/?d=1470039453
-}
-{
-  Index: 4
-  Issuer CA ID: 1399
-  Issuer Name: C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 Extended Validation Server CA
-  Name: www.sagawa-exp.co.jp
-  Min Cert ID: 961131139
-  Min Entry TimeStamp: 2018-11-20T05:15:04.525
-  Not Before: 2018-11-20T00:00:00
-  Not After: 2019-11-21T12:00:00
-  Donwload Pem file: https://crt.sh/?d=961131139
-}
+$ crtsh -q kaspe_sky.com -o
+kaspersky.com
+kaspevsky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspessky.com
+kaspezsky.com
+kaspersky.com
+kaspe2sky.com
+kaspebsky.com
+kaspepsky.com
+kaspezsky.com
+kaspevsky.com
+kaspessky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
+kaspersky.com
 ```
+
+It can find URLs for Typosquatting.
 
 ### `-cn` option
 The `-cn` option query CommonName.
 And this option also can use `-o` option.
-For Example: `crtsh -cn <CommonName>
+For Example: `crtsh -cn <CommonName>`
 
 ```sh
 $ crtsh -cn test
@@ -324,3 +324,64 @@ import (
     "github.com/famasoon/crtsh/parser"
 )
 ```
+
+## Getting start
+For example:
+Finding URL for Typosquatting, and enumerate other Typosquatting URLs with CT logs(pem file)
+
+1. Find URL for Typosquatting
+
+```sh
+$ crtsh -q kaspe_sky.com
+{
+  Index: 1
+  Issuer CA ID: 1191
+  Issuer Name: C=US, O=DigiCert Inc, CN=DigiCert SHA2 Secure Server CA
+  Name: kaspersky.com
+  Min Cert ID: 2114755056
+  Min Entry TimeStamp: 2019-11-15T11:51:37.847
+  Not Before: 2019-11-15T00:00:00
+  Not After: 2021-11-19T12:00:00
+  Donwload Pem file: https://crt.sh/?d=2114755056
+}
+{
+  Index: 2
+  Issuer CA ID: 9324
+  Issuer Name: C=US, O=Amazon, OU=Server CA 1B, CN=Amazon
+  Name: kaspevsky.com
+  Min Cert ID: 2106245075
+  Min Entry TimeStamp: 2019-11-13T12:16:22.861
+  Not Before: 2019-03-19T00:00:00
+  Not After: 2020-04-19T12:00:00
+  Donwload Pem file: https://crt.sh/?d=2106245075
+}
+===snip===
+```
+
+Min Cert ID:`2106245075` looks like using URL for Typosquatting.
+
+
+2. Enumerate other URL with CT log
+
+```sh
+$ crtsh -i 2106245075
+CertID: 2106245075
+Enumrate DNS Names:
+kaspevsky.com
+*.kaspevsky.com
+kaspursky.com
+*.kaspursky.com
+kasperqky.com
+*.kasperqky.com
+kaspgrsky.com
+*.kaspgrsky.com
+kasxersky.com
+*.kasxersky.com
+```
+
+This certificate included URLs for other Typosquatting :thinking:
+
+## Credit
+- This tool is using [https://crt.sh](https://crt.sh)
+- Created by FAMASoon
+- [Twitter](https://twitter.com/FAMASoon)

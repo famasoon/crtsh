@@ -32,7 +32,7 @@ func showUsage() {
 
 func searchComon(query string, onlyDomainFlag bool) error {
 	req := http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 60 * time.Second,
 	}
 	res, err := req.Get(CRTSHURL + "?output=json&CN=" + query)
 	if err != nil {

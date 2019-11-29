@@ -12,8 +12,11 @@ import (
 // CRTSHURL is URL of crt.sh endpoint
 const CRTSHURL string = "https://crt.sh/"
 
+// CTLogs is CTLog slice
 type CTLogs []*CTLog
 
+// CTLog is result to query crt.sh
+// CTLog include some information related CA
 type CTLog struct {
 	IssuerCaID        int    `json:"issuer_ca_id"`
 	IssuerName        string `json:"issuer_name"`
@@ -47,6 +50,20 @@ func queryCrtsh(query string) ([]byte, error) {
 	return body, nil
 }
 
+func (ctlog CTLog) showFullCTlog() {
+	fmt.Println("{")
+	fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
+	fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
+	fmt.Printf("  Name: %s\n", ctlog.NameValue)
+	fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
+	fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
+	fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
+	fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
+	fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
+	fmt.Println("}")
+}
+
+// SearchComon query in crt.sh by common name and print result that
 func SearchComon(query string, onlyDomainFlag bool) error {
 	var ctlogs CTLogs
 
@@ -60,24 +77,15 @@ func SearchComon(query string, onlyDomainFlag bool) error {
 			fmt.Printf("%s\n", ctlog.NameValue)
 		}
 	} else {
-		for key, ctlog := range ctlogs {
-			fmt.Println("{")
-			fmt.Printf("  Index: %d\n", key+1)
-			fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
-			fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
-			fmt.Printf("  Name: %s\n", ctlog.NameValue)
-			fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
-			fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
-			fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
-			fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
-			fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
-			fmt.Println("}")
+		for _, ctlog := range ctlogs {
+			ctlog.showFullCTlog()
 		}
 	}
 
 	return nil
 }
 
+// QueryCrt query in crt.sh and print result that
 func QueryCrt(query string, onlyDomainFlag bool) error {
 	var ctlogs CTLogs
 
@@ -91,24 +99,15 @@ func QueryCrt(query string, onlyDomainFlag bool) error {
 			fmt.Printf("%s\n", ctlog.NameValue)
 		}
 	} else {
-		for key, ctlog := range ctlogs {
-			fmt.Println("{")
-			fmt.Printf("  Index: %d\n", key+1)
-			fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
-			fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
-			fmt.Printf("  Name: %s\n", ctlog.NameValue)
-			fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
-			fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
-			fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
-			fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
-			fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
-			fmt.Println("}")
+		for _, ctlog := range ctlogs {
+			ctlog.showFullCTlog()
 		}
 	}
 
 	return nil
 }
 
+// GetPemFile download pemfile from crt.sh and dump to []byte
 func GetPemFile(certID int) ([]byte, error) {
 	body, err := queryCrtsh(CRTSHURL + "?d=" + strconv.Itoa(certID))
 	if err != nil {

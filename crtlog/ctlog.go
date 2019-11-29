@@ -1,5 +1,17 @@
 package crtlog
 
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"time"
+)
+
+// CRTSHURL is URL of crt.sh endpoint
+const CRTSHURL string = "https://crt.sh/"
+
 type CTLogs []*CTLog
 
 type CTLog struct {
@@ -10,4 +22,98 @@ type CTLog struct {
 	MinEntryTimestamp string `json:"min_entry_timestamp"`
 	NotBefore         string `json:"not_before"`
 	NotAfter          string `json:"not_after"`
+}
+
+func queryCrtsh(query string) ([]byte, error) {
+	req := http.Client{
+		Timeout: 60 * time.Second,
+	}
+	res, err := req.Get(query)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		err = fmt.Errorf("Can not Access crt.sh")
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func SearchComon(query string, onlyDomainFlag bool) error {
+	var ctlogs CTLogs
+
+	res, err := queryCrtsh(CRTSHURL + "?output=json&CN=" + query)
+	if err = json.Unmarshal(res, &ctlogs); err != nil {
+		return err
+	}
+
+	if onlyDomainFlag {
+		for _, ctlog := range ctlogs {
+			fmt.Printf("%s\n", ctlog.NameValue)
+		}
+	} else {
+		for key, ctlog := range ctlogs {
+			fmt.Println("{")
+			fmt.Printf("  Index: %d\n", key+1)
+			fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
+			fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
+			fmt.Printf("  Name: %s\n", ctlog.NameValue)
+			fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
+			fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
+			fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
+			fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
+			fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
+			fmt.Println("}")
+		}
+	}
+
+	return nil
+}
+
+func QueryCrt(query string, onlyDomainFlag bool) error {
+	var ctlogs CTLogs
+
+	res, err := queryCrtsh(CRTSHURL + "?output=json&q=" + query)
+	if err = json.Unmarshal(res, &ctlogs); err != nil {
+		return err
+	}
+
+	if onlyDomainFlag {
+		for _, ctlog := range ctlogs {
+			fmt.Printf("%s\n", ctlog.NameValue)
+		}
+	} else {
+		for key, ctlog := range ctlogs {
+			fmt.Println("{")
+			fmt.Printf("  Index: %d\n", key+1)
+			fmt.Printf("  Issuer CA ID: %d\n", ctlog.IssuerCaID)
+			fmt.Printf("  Issuer Name: %s\n", ctlog.IssuerName)
+			fmt.Printf("  Name: %s\n", ctlog.NameValue)
+			fmt.Printf("  Min Cert ID: %d\n", ctlog.MinCertID)
+			fmt.Printf("  Min Entry TimeStamp: %s\n", ctlog.MinEntryTimestamp)
+			fmt.Printf("  Not Before: %s\n", ctlog.NotBefore)
+			fmt.Printf("  Not After: %s\n", ctlog.NotAfter)
+			fmt.Printf("  Donwload Pem file: %s?d=%d\n", CRTSHURL, ctlog.MinCertID)
+			fmt.Println("}")
+		}
+	}
+
+	return nil
+}
+
+func GetPemFile(certID int) ([]byte, error) {
+	body, err := queryCrtsh(CRTSHURL + "?d=" + strconv.Itoa(certID))
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
 }

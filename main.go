@@ -5,11 +5,8 @@ import (
 	"encoding/pem"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/famasoon/crtsh/crtlog"
 	"github.com/famasoon/crtsh/parser"
@@ -26,18 +23,7 @@ func showUsage() {
 }
 
 func parseCTLog(certID int) error {
-	res, err := http.Get(crtlog.CRTSHURL + "?d=" + strconv.Itoa(certID))
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		err = fmt.Errorf("Can not Access crt.sh")
-		return err
-	}
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := crtlog.GetPemFile(certID)
 	if err != nil {
 		return err
 	}

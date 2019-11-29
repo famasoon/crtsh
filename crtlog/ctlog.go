@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -106,4 +107,13 @@ func QueryCrt(query string, onlyDomainFlag bool) error {
 	}
 
 	return nil
+}
+
+func GetPemFile(certID int) ([]byte, error) {
+	body, err := queryCrtsh(CRTSHURL + "?d=" + strconv.Itoa(certID))
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
 }

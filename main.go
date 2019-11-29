@@ -20,8 +20,7 @@ func showUsage() {
 	os.Exit(0)
 }
 
-// TODO: Create run function () (err)
-func main() {
+func run() error {
 	var (
 		query          string
 		certID         int
@@ -40,19 +39,28 @@ func main() {
 	if query != "" {
 		err := crtlog.QueryCrt(query, onlyDomainFlag)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	} else if certID != 0 {
 		fmt.Printf("CertID: %d\n", certID)
 
 		err := parser.ParseCTLog(certID)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	} else {
 		err := crtlog.SearchComon(commonName, onlyDomainFlag)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
+	}
+
+	return nil
+}
+
+func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err)
 	}
 }

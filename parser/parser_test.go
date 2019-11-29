@@ -64,7 +64,7 @@ func TestEnumDNS(t *testing.T) {
 		t.Fatal("Can not parse certficate")
 	}
 
-	for key, record := range EnumDNS(cert) {
+	for key, record := range enumDNS(cert) {
 		if record != tests[key] {
 			t.Errorf("#%d: got: %s want %s", key, record, tests[key])
 		}

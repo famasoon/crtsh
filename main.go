@@ -1,8 +1,6 @@
 package main
 
 import (
-	"crypto/x509"
-	"encoding/pem"
 	"flag"
 	"fmt"
 	"log"
@@ -20,26 +18,6 @@ func showUsage() {
 	fmt.Println("  -cn Common Name")
 	fmt.Printf("Usage: %s -q example.com\n", os.Args[0])
 	os.Exit(0)
-}
-
-func parseCTLog(certID int) error {
-	body, err := crtlog.GetPemFile(certID)
-	if err != nil {
-		return err
-	}
-
-	block, _ := pem.Decode(body)
-
-	cert, err := x509.ParseCertificate(block.Bytes)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("Enumrate DNS Names:")
-	for _, dnsName := range parser.EnumDNS(cert) {
-		fmt.Println(dnsName)
-	}
-	return nil
 }
 
 // TODO: Create run function () (err)
@@ -67,7 +45,7 @@ func main() {
 	} else if certID != 0 {
 		fmt.Printf("CertID: %d\n", certID)
 
-		err := parseCTLog(certID)
+		err := parser.ParseCTLog(certID)
 		if err != nil {
 			log.Fatal(err)
 		}

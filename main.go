@@ -30,24 +30,34 @@ func showUsage() {
 	os.Exit(0)
 }
 
-func searchComon(query string, onlyDomainFlag bool) error {
+func queryCrtsh(query string) ([]byte, error) {
 	req := http.Client{
 		Timeout: 60 * time.Second,
 	}
-	res, err := req.Get(CRTSHURL + "?output=json&CN=" + query)
+	res, err := req.Get(query)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
 		err = fmt.Errorf("Can not Access crt.sh")
-		return err
+		return nil, err
 	}
 
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func searchComon(query string, onlyDomainFlag bool) error {
 	var ctlogs crtlog.CTLogs
 
-	if err = json.NewDecoder(res.Body).Decode(&ctlogs); err != nil {
+	res, err := queryCrtsh(CRTSHURL + "?output=json&CN=" + query)
+	if err = json.Unmarshal(res, &ctlogs); err != nil {
 		return err
 	}
 
@@ -75,23 +85,10 @@ func searchComon(query string, onlyDomainFlag bool) error {
 }
 
 func queryCrt(query string, onlyDomainFlag bool) error {
-	req := http.Client{
-		Timeout: 60 * time.Second,
-	}
-	res, err := req.Get(CRTSHURL + "?output=json&q=" + query)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		err = fmt.Errorf("Can not Access crt.sh")
-		return err
-	}
-
 	var ctlogs crtlog.CTLogs
 
-	if err = json.NewDecoder(res.Body).Decode(&ctlogs); err != nil {
+	res, err := queryCrtsh(CRTSHURL + "?output=json&q=" + query)
+	if err = json.Unmarshal(res, &ctlogs); err != nil {
 		return err
 	}
 

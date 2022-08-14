@@ -21,7 +21,7 @@ func ParseCTLog(certID int) error {
 		return err
 	}
 
-	fmt.Println("Enumrate DNS Names:")
+	fmt.Println("Enumerate DNS Names:")
 	for _, dnsName := range enumDNS(cert) {
 		fmt.Println(dnsName)
 	}

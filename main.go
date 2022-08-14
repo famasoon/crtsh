@@ -49,7 +49,7 @@ func run() error {
 			return err
 		}
 	} else {
-		err := crtlog.SearchComon(commonName, onlyDomainFlag)
+		err := crtlog.SearchCommon(commonName, onlyDomainFlag)
 		if err != nil {
 			return err
 		}

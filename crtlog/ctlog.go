@@ -64,7 +64,7 @@ func (ctlog CTLog) showFullCTlog() {
 }
 
 // SearchComon query in crt.sh by common name and print result that
-func SearchComon(query string, onlyDomainFlag bool) error {
+func SearchCommon(query string, onlyDomainFlag bool) error {
 	var ctlogs CTLogs
 
 	res, err := queryCrtsh(CRTSHURL + "?output=json&CN=" + query)

@@ -68,6 +68,9 @@ func SearchComon(query string, onlyDomainFlag bool) error {
 	var ctlogs CTLogs
 
 	res, err := queryCrtsh(CRTSHURL + "?output=json&CN=" + query)
+	if err != nil {
+		return err
+	}
 	if err = json.Unmarshal(res, &ctlogs); err != nil {
 		return err
 	}
@@ -90,6 +93,9 @@ func QueryCrt(query string, onlyDomainFlag bool) error {
 	var ctlogs CTLogs
 
 	res, err := queryCrtsh(CRTSHURL + "?output=json&q=" + query)
+	if err != nil {
+		return err
+	}
 	if err = json.Unmarshal(res, &ctlogs); err != nil {
 		return err
 	}

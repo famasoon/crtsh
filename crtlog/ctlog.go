@@ -38,7 +38,7 @@ func queryCrtsh(query string) ([]byte, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		err = fmt.Errorf("Can not Access crt.sh")
+		err = fmt.Errorf("can not Access crt.sh")
 		return nil, err
 	}
 

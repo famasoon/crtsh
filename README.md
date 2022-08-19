@@ -128,7 +128,7 @@ example.com
 
 ---
 
-This option can query to use wildcard (% = wildcard) and `_`  (_ = completing input)
+This option can query to use wildcard (% = wildcard)
 
 For Example:
 
@@ -152,62 +152,14 @@ www.example.com
 We can extract unique URL.
 
 ```sh
-$ crtsh -q %.example.com -o | sort | uniq 
+$ crtsh -q %.example.com -o | sort | uniq
 *.example.com
 dev.example.com
 m.example.com
 products.example.com
 support.example.com
 www.example.com
-``` 
-
-For Example `_` used:
-
-```sh
-$ crtsh -q kaspe_sky.com -o
-kaspersky.com
-kaspevsky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspessky.com
-kaspezsky.com
-kaspersky.com
-kaspe2sky.com
-kaspebsky.com
-kaspepsky.com
-kaspezsky.com
-kaspevsky.com
-kaspessky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
-kaspersky.com
 ```
-
-It can find URLs for Typosquatting.
 
 ### `-cn` option
 The `-cn` option query CommonName.
@@ -324,63 +276,6 @@ import (
     "github.com/famasoon/crtsh/parser"
 )
 ```
-
-## Getting start
-For example:
-Finding URL for Typosquatting, and enumerate other Typosquatting URLs with CT logs(pem file)
-
-1. Find URL for Typosquatting
-
-```sh
-$ crtsh -q kaspe_sky.com
-{
-  Index: 1
-  Issuer CA ID: 1191
-  Issuer Name: C=US, O=DigiCert Inc, CN=DigiCert SHA2 Secure Server CA
-  Name: kaspersky.com
-  Min Cert ID: 2114755056
-  Min Entry TimeStamp: 2019-11-15T11:51:37.847
-  Not Before: 2019-11-15T00:00:00
-  Not After: 2021-11-19T12:00:00
-  Donwload Pem file: https://crt.sh/?d=2114755056
-}
-{
-  Index: 2
-  Issuer CA ID: 9324
-  Issuer Name: C=US, O=Amazon, OU=Server CA 1B, CN=Amazon
-  Name: kaspevsky.com
-  Min Cert ID: 2106245075
-  Min Entry TimeStamp: 2019-11-13T12:16:22.861
-  Not Before: 2019-03-19T00:00:00
-  Not After: 2020-04-19T12:00:00
-  Donwload Pem file: https://crt.sh/?d=2106245075
-}
-===snip===
-```
-
-Min Cert ID:`2106245075` looks like using URL for Typosquatting.
-
-
-2. Enumerate other URL with CT log
-
-```sh
-$ crtsh -i 2106245075
-CertID: 2106245075
-Enumrate DNS Names:
-kaspevsky.com
-*.kaspevsky.com
-kaspursky.com
-*.kaspursky.com
-kasperqky.com
-*.kasperqky.com
-kaspgrsky.com
-*.kaspgrsky.com
-kasxersky.com
-*.kasxersky.com
-```
-
-This certificate included URLs for other Typosquatting :thinking:
-
 ## Credit
 - This tool is using [https://crt.sh](https://crt.sh)
 - Created by FAMASoon
